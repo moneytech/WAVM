@@ -602,6 +602,11 @@ struct FunctionPrintContext
 		string += ' ';
 		string += moduleContext.names.functions[imm.functionIndex].name;
 	}
+	void printImm(FunctionRefImm imm)
+	{
+		string += ' ';
+		string += moduleContext.names.functions[imm.functionIndex].name;
+	}
 
 	void printImm(LiteralImm<I32> imm)
 	{
@@ -691,8 +696,8 @@ struct FunctionPrintContext
 
 	void printImm(DataSegmentAndMemImm imm)
 	{
-		string += " " + moduleContext.names.dataSegments[imm.dataSegmentIndex];
 		if(imm.memoryIndex != 0) { string += " " + moduleContext.names.memories[imm.memoryIndex]; }
+		string += " " + moduleContext.names.dataSegments[imm.dataSegmentIndex];
 	}
 	void printImm(DataSegmentImm imm)
 	{
@@ -701,8 +706,8 @@ struct FunctionPrintContext
 
 	void printImm(ElemSegmentAndTableImm imm)
 	{
+		if(imm.tableIndex != 0) { string += " " + moduleContext.names.tables[imm.tableIndex]; }
 		string += " " + moduleContext.names.elemSegments[imm.elemSegmentIndex];
-		string += " " + moduleContext.names.tables[imm.tableIndex];
 	}
 	void printImm(ElemSegmentImm imm)
 	{
@@ -1006,6 +1011,10 @@ void ModulePrintContext::printModule()
 			}
 			string += ' ';
 			printInitializerExpression(elemSegment.baseOffset);
+		}
+		else if(elemSegment.type == ElemSegment::Type::declared)
+		{
+			string += " declare";
 		}
 
 		if(elemSegment.contents->encoding == ElemSegment::Encoding::index)
